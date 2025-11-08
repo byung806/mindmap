@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 import json
 from nodeGenerationAgent import send_message_to_claude
 
@@ -19,8 +19,14 @@ app.add_middleware(
 
 class NodeGenerationRequest(BaseModel):
     message: str
-    instructions_file: Optional[str] = "nodeGenerationInstruction.txt"
-    additional_files: Optional[List[str]] = ["sampleGraph1.json"]
+    existing_graph: Optional[dict] = None  # Optional existing graph JSON object
+    max_tokens: Optional[int] = 4096
+
+
+class NodePlacementRequest(BaseModel):
+    message: str
+    new_nodes: dict  # The JSON object containing new nodes
+    existing_graph: dict  # The JSON object containing the existing graph
     max_tokens: Optional[int] = 4096
 
 
@@ -36,16 +42,21 @@ async def generate_nodes(request: NodeGenerationRequest):
 
     Request body:
     - message: The user's query (e.g., "Break down React Hooks into subtopics")
-    - instructions_file: Path to instruction file (optional, defaults to nodeGenerationInstruction.txt)
-    - additional_files: List of additional context files (optional, defaults to [sampleGraph1.json])
+    - existing_graph: Optional existing graph JSON object for context
     - max_tokens: Maximum tokens in response (optional, defaults to 4096)
     """
     try:
-        # Call Claude API - now returns parsed JSON directly
+        # Build the user message
+        user_message = request.message
+
+        # Add existing graph as JSON in the message if provided
+        if request.existing_graph:
+            user_message += f"\n\n### Existing Graph:\n```json\n{json.dumps(request.existing_graph, indent=2)}\n```"
+
+        # Call Claude API - always uses nodeGenerationInstruction.txt
         nodes_data = send_message_to_claude(
-            message=request.message,
-            instructions_file=request.instructions_file,
-            additional_files=request.additional_files,
+            message=user_message,
+            instructions_file="nodeGenerationInstruction.txt",
             max_tokens=request.max_tokens
         )
 
@@ -60,15 +71,56 @@ async def generate_nodes(request: NodeGenerationRequest):
             status_code=500,
             detail=f"Failed to parse JSON from Claude's response: {str(e)}"
         )
-    except FileNotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=f"File not found: {str(e)}"
-        )
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Error generating nodes: {str(e)}"
+        )
+
+
+@app.post("/api/place-nodes")
+async def place_nodes(request: NodePlacementRequest):
+    """
+    Place new nodes into an existing graph using Claude AI.
+
+    Request body:
+    - message: The user's query (e.g., "Place the new nodes into the existing graph structure")
+    - new_nodes: JSON object containing new nodes
+    - existing_graph: JSON object containing the existing graph
+    - max_tokens: Maximum tokens in response (optional, defaults to 4096)
+    """
+    try:
+        # Build the user message with new nodes and existing graph
+        user_message = request.message
+
+        # Add new nodes as JSON in the message
+        user_message += f"\n\n### New Nodes:\n```json\n{json.dumps(request.new_nodes, indent=2)}\n```"
+
+        # Add existing graph as JSON in the message
+        user_message += f"\n\n### Existing Graph:\n```json\n{json.dumps(request.existing_graph, indent=2)}\n```"
+
+        # Call Claude API - always uses nodePlacementInsturction.txt
+        placement_data = send_message_to_claude(
+            message=user_message,
+            instructions_file="nodePlacementInsturction.txt",
+            max_tokens=request.max_tokens
+        )
+
+        # Return the updated graph with placed nodes
+        return {
+            "success": True,
+            "data": placement_data
+        }
+
+    except json.JSONDecodeError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to parse JSON from Claude's response: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error placing nodes: {str(e)}"
         )
 
 
