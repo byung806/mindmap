@@ -1,0 +1,82 @@
+{
+  "nodes": [
+    {
+      "id": "cs_root",
+      "title": "Computer Science",
+      "topic": "root",
+      "overview": "The study of computation, information processing, and the design of computer systems. It encompasses both theoretical foundations and practical applications of computing.",
+      "links": [
+        "https://www.coursera.org/browse/computer-science",
+        "https://cs.stanford.edu/",
+        "https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/"
+      ],
+      "weight": 95
+    },
+    {
+      "id": "web_dev",
+      "title": "Web Development",
+      "topic": "Computer Science",
+      "overview": "The practice of building and maintaining websites and web applications. It includes frontend, backend, and full-stack development using various technologies and frameworks.",
+      "links": [
+        "https://developer.mozilla.org/en-US/docs/Learn",
+        "https://web.dev/",
+        "https://www.theodinproject.com/"
+      ],
+      "weight": 68
+    },
+    {
+      "id": "frontend",
+      "title": "Frontend Development",
+      "topic": "Web Development",
+      "overview": "The client-side of web development focused on what users see and interact with. It involves HTML, CSS, JavaScript, and modern frameworks to create responsive and interactive user interfaces.",
+      "links": [
+        "https://developer.mozilla.org/en-US/docs/Learn/Front-end_web_developer",
+        "https://frontendmasters.com/guides/learning-roadmap/",
+        "https://www.freecodecamp.org/learn/front-end-development-libraries/"
+      ],
+      "weight": 45
+    },
+    {
+      "id": "backend",
+      "title": "Backend Development",
+      "topic": "Web Development",
+      "overview": "The server-side of web development that handles data processing, business logic, and database interactions. Backend developers work with servers, APIs, and databases to power web applications.",
+      "links": [
+        "https://roadmap.sh/backend",
+        "https://www.theodinproject.com/paths/full-stack-javascript/courses/nodejs",
+        "https://developer.mozilla.org/en-US/docs/Learn/Server-side"
+      ],
+      "weight": 47
+    },
+    {
+      "id": "react_lib",
+      "title": "React",
+      "topic": "Frontend Development",
+      "overview": "A popular JavaScript library for building user interfaces with a component-based architecture. React enables developers to create reusable UI components and efficiently update the DOM.",
+      "links": [
+        "https://react.dev/",
+        "https://react.dev/learn",
+        "https://www.freecodecamp.org/news/react-beginner-handbook/"
+      ],
+      "weight": 22
+    }
+  ],
+  "edges": [
+    {
+      "node1": "cs_root",
+      "node2": "web_dev"
+    },
+    {
+      "node1": "web_dev",
+      "node2": "frontend"
+    },
+    {
+      "node1": "web_dev",
+      "node2": "backend"
+    },
+    {
+      "node1": "frontend",
+      "node2": "react_lib"
+    }
+  ]
+}
