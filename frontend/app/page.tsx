@@ -3,10 +3,31 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import MindMap from "./components/MindMap";
 
 export default function Home() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+
+  // Placeholder data for demo section
+  const placeholderData = {
+    nodes: [
+      { link: "https://diamondpearl.pokemon.com/en-us/trainersguide/fundamentals/", title: "Pokémon Trainer Fundamentals (Official Guide)", overview: "Official walkthrough of catching, raising, and battling Pokémon in the core games.", topic: "Fundamentals" },
+      { link: "https://www.dragonflycave.com/mechanics", title: "Game Mechanics — Pokémon Deep Dive", overview: "In-depth explanations of stat calculations, battle modifiers, and capture algorithms across generations.", topic: "Mechanics" },
+      { link: "https://www.instructables.com/How-to-Build-a-Competitive-Pokemon-Team-a-Comprehe/", title: "How to Build a Competitive Pokémon Team: A Comprehensive Guide", overview: "Step-by-step guide for team-building in competitive formats, covering IVs, EVs, tiers and simulators.", topic: "Competitive" },
+      { link: "https://www.smogon.com/dp/articles/intro_comp_pokemon", title: "Introduction to Competitive Pokémon (Smogon)", overview: "Overview of competitive Pokémon play emphasizing mechanics, team organization, and battle tactics.", topic: "Competitive" },
+      { link: "https://www.vgcguide.com/", title: "VGC Guide – Competitive Pokémon Strategy", overview: "Comprehensive resource for building competitive teams and understanding meta-game tactics.", topic: "Competitive" },
+      { link: "https://scarletviolet.pokemon.com/en-us/trainers-guide/the-terastal-phenomenon/", title: "The Terastal Phenomenon – Pokémon Scarlet & Violet", overview: "Official explanation of the Tera-type mechanic and how it changes battle strategy in Scarlet & Violet.", topic: "Advanced Mechanics" },
+      { link: "https://www.pokemon.com/us/pokedex/", title: "Pokédex – Official Pokémon Database", overview: "Official database of every Pokémon species, forms, moves and abilities—essential reference.", topic: "Fundamentals" },
+      { link: "https://bulbapedia.bulbagarden.net/wiki/Move_(Pok%C3%A9mon)", title: "Moves and Abilities – Bulbapedia Guide", overview: "Deep guide to Pokémon moves, abilities, categories, effects, and mechanics across generations.", topic: "Mechanics" }
+    ],
+    edges: [
+      { source: "Pokémon Trainer Fundamentals (Official Guide)", target: "Pokédex – Official Pokémon Database" },
+      { source: "Pokémon Trainer Fundamentals (Official Guide)", target: "Moves and Abilities – Bulbapedia Guide" },
+      { source: "Pokédex – Official Pokémon Database", target: "Moves and Abilities – Bulbapedia Guide" },
+      { source: "Moves and Abilities – Bulbapedia Guide", target: "Game Mechanics — Pokémon Deep Dive" }
+    ]
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,28 +36,6 @@ export default function Home() {
     // Navigate to search page with query parameter
     router.push(`/search?q=${encodeURIComponent(query)}`);
   };
-
-  if (showGraph) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-black dark:via-zinc-950 dark:to-black">
-        <div className="border-b border-zinc-200 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/80">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-            <button
-              onClick={() => setShowGraph(false)}
-              className="text-sm font-medium text-zinc-600 transition-colors hover:text-black dark:text-zinc-400 dark:hover:text-white"
-            >
-              ← Back
-            </button>
-            <h2 className="text-lg font-semibold text-black dark:text-white">
-              {query}
-            </h2>
-            <div className="w-16" />
-          </div>
-        </div>
-        <MindMap data={graphData} />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-black dark:via-zinc-950 dark:to-black">
