@@ -150,24 +150,30 @@ def main():
     except Exception as e:
         print(f"Error: {e}\n")
 
-    # Example 3: Using an actual instructions file
-    # print("=== Example 3: Using instructions from file ===")
-    # print("To use a file, call:")
-    # print("response = send_message_to_claude(")
-    # print("    message='Your question here',")
-    # print("    instructions_file='path/to/instructions.txt'")
-    # print(")")
+    # Example 3: Node placement with multiple input files
+    print("=== Example 3: Node placement with existing graph and new nodes ===")
 
-    # Uncomment below to test with an actual file:
-    # try:
-    #     response = send_message_to_claude(
-    #         message="Your question here",
-    #         instructions_file="instructions.txt"
-    #     )
-    #     print(response["choices"][0]["message"]["content"])
-    # except Exception as e:
-    #     print(f"Error: {e}")
+    user_input = 'Place the new nodes into the existing graph structure.'
 
+    try:
+        # Call the function with node placement instructions
+        placement_data = send_message_to_claude(
+            message=user_input,
+            instructions_file="nodePlacementInsturction.txt",
+            additional_files=["claude_response.json", "sampleGraph1.json"]
+        )
+
+        # Print the JSON response
+        print(f"Claude's response:\n{json.dumps(placement_data, indent=2)}\n")
+
+        # Save the response to a JSON file
+        output_file = "node_placement_response.json"
+        with open(output_file, 'w') as f:
+            json.dump(placement_data, f, indent=2)
+
+        print(f"\nResponse saved to: {output_file}")
+    except Exception as e:
+        print(f"Error: {e}\n")
 
 if __name__ == "__main__":
     main()
